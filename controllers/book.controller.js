@@ -1,8 +1,31 @@
+const { z } = require("zod");
 const Book = require("../models/book.model");
+
+// Zod schema for book validation
+const bookSchema = z.object({
+  title: z.string().min(3, "Title must be at least 3 characters long"),
+  author: z.string().min(3, "Author must be at least 3 characters long"),
+  category: z.string().min(3, "Category must be at least 3 characters long"),
+  description: z.string().optional(),
+  imageUrl: z.string().url().optional(),
+  publishedYear: z.number().min(1900, "Published year must be a valid year").optional(),
+  availableCopies: z.number().min(1, "Available copies must be at least 1"),
+  rating: z.number().min(1).max(5, "Rating must be between 1 and 5").optional(),
+  status: z.enum(["pending", "approved"]),
+  department: z.enum([
+    "EEE", "CE", "Law", "English", "Business Administration", "CSE", "Mathematics", "Bangla", "Related Subjects"
+  ])
+});
 
 // Create Book
 exports.createBook = async (req, res) => {
   try {
+    // Validate request body using Zod
+    const parsed = bookSchema.safeParse(req.body);
+    if (!parsed.success) {
+      return res.status(400).json({ message: "Validation Error", errors: parsed.error.errors });
+    }
+
     const book = await Book.create(req.body);
     res.status(201).json(book);
   } catch (error) {
@@ -37,9 +60,13 @@ exports.getBooks = async (req, res) => {
 // Update Book by ID
 exports.updateBook = async (req, res) => {
   try {
-    const updatedBook = await Book.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
+    // Validate request body using Zod
+    const parsed = bookSchema.safeParse(req.body);
+    if (!parsed.success) {
+      return res.status(400).json({ message: "Validation Error", errors: parsed.error.errors });
+    }
+
+    const updatedBook = await Book.findByIdAndUpdate(req.params.id, req.body, { new: true });
 
     if (!updatedBook) {
       return res.status(404).json({ message: "Book not found" });
