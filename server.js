@@ -3,9 +3,10 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const dotenv = require("dotenv");
 
-dotenv.config();  // Load environment variables from .env file
+dotenv.config();
 
 const app = express();
+
 app.use(cors());
 app.use(express.json());
 
@@ -13,7 +14,8 @@ app.use(express.json());
 app.use("/api/auth", require("./routes/auth.route"));
 app.use("/api/books", require("./routes/book.route"));
 
-// MongoDB Connection
+const PORT = process.env.PORT || 5000;
+
 const connectDB = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URL, {
@@ -23,18 +25,17 @@ const connectDB = async () => {
     console.log("MongoDB Connected");
   } catch (err) {
     console.error("MongoDB connection error:", err);
-    process.exit(1);  // Exit process if DB connection fails
+    process.exit(1);
   }
 };
 
-// Start Server
 const startServer = () => {
-  app.listen(process.env.PORT, () => {
-    console.log(`Server running on port ${process.env.PORT}`);
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
   });
 };
 
-// Graceful Shutdown
+// Graceful shutdown handling
 process.on("SIGINT", () => {
   console.log("Received SIGINT. Shutting down gracefully...");
   mongoose.connection.close(() => {
@@ -51,11 +52,10 @@ process.on("SIGTERM", () => {
   });
 });
 
-// Environment Variable Check
-if (!process.env.MONGO_URL || !process.env.PORT) {
-  console.error("Missing environment variables: MONGO_URL or PORT");
-  process.exit(1);  // Exit if required environment variables are missing
+// Check required env variables before start
+if (!process.env.MONGO_URL || !process.env.JWT_SECRET) {
+  console.error("Missing required environment variables: MONGO_URL or JWT_SECRET");
+  process.exit(1);
 }
 
-// Initialize the database and start the server
 connectDB().then(startServer);
