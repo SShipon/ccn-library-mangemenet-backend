@@ -1,5 +1,5 @@
 const express = require("express");
-const { createBook, getBooks, updateBook, deleteBook, approveBook } = require("../controllers/book.controller");
+const { createBook, getBooks,getBookById, updateBook, deleteBook, approveBook } = require("../controllers/book.controller");
 const { verifyToken } = require("../middlewares/verifyToken");
 const { verifyAdmin } = require("../middlewares/verifyAdmin");
 
@@ -11,6 +11,7 @@ router.post("/", verifyToken, createBook);
 // Get all books - public route
 router.get("/", getBooks);
 
+router.get("/:id", getBookById); 
 // Update book - logged in user
 router.put("/:id", verifyToken, updateBook);
 

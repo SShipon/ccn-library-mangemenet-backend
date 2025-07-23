@@ -9,7 +9,7 @@ exports.verifyToken = (req, res, next) => {
 
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
     if (err) return res.status(403).json({ message: "Forbidden" });
-    req.user = user;  // token থেকে পাওয়া ডাটা এখানে বসবে
+    req.user = user; 
     next();
   });
 };

@@ -54,10 +54,10 @@ const bookSchema = new mongoose.Schema({
         required: [true, "Department is required"], // Department must be present
         enum: [
             "EEE", // Electrical and Electronic Engineering
-            "CE",  // Civil Engineering
+            "Civil",  // Civil Engineering
             "Law",  // Law
             "English",  // English
-            "Business Administration",  // Business Administration
+            "Business",  // Business Administration
             "CSE",  // Computer Science & Engineering
             "Mathematics",  // Mathematics
             "Bangla",  // Bangla

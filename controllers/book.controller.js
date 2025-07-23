@@ -13,7 +13,7 @@ const bookSchema = z.object({
   rating: z.number().min(1).max(5, "Rating must be between 1 and 5").optional(),
   status: z.enum(["pending", "approved"]),
   department: z.enum([
-    "EEE", "CE", "Law", "English", "Business Administration", "CSE", "Mathematics", "Bangla", "Related Subjects"
+   "CSE", "EEE", "Civil", "Law", "English", "Business", "Mathematics", "Bangla", "Related Subjects"
   ])
 });
 
@@ -36,24 +36,42 @@ exports.createBook = async (req, res) => {
 // Get Books (with optional search)
 exports.getBooks = async (req, res) => {
   try {
-    const { search } = req.query;
+    const { search, category, department, title } = req.query;  
     let query = {};
 
+   
     if (search) {
       query = {
         $or: [
           { title: { $regex: search, $options: "i" } },
           { author: { $regex: search, $options: "i" } },
-          { category: { $regex: search, $options: "i" } },
           { description: { $regex: search, $options: "i" } },
         ],
       };
     }
 
+  
+    if (category) {
+      query.category = { $regex: category, $options: "i" };
+    }
+
+    
+    if (department) {
+      query.department = { $regex: department, $options: "i" };
+    }
+
+  
+    if (title) {
+      query.title = { $regex: title, $options: "i" };
+    }
+
+ 
     const books = await Book.find(query);
+
+
     res.status(200).json(books);
   } catch (error) {
-    res.status(500).json({ message: "Failed to get books", error: error.message });
+    res.status(500).json({ message: "books not found", error: error.message });
   }
 };
 
@@ -90,6 +108,20 @@ exports.deleteBook = async (req, res) => {
     res.status(200).json({ message: "Book deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: "Failed to delete book", error: error.message });
+  }
+};
+// Get single book by ID
+exports.getBookById = async (req, res) => {
+  try {
+    const book = await Book.findById(req.params.id);
+
+    if (!book) {
+      return res.status(404).json({ message: "Book not found" });
+    }
+
+    res.status(200).json(book); // Returning the book details
+  } catch (error) {
+    res.status(500).json({ message: "Failed to get book", error: error.message });
   }
 };
 
