@@ -20,14 +20,18 @@ const bookSchema = new mongoose.Schema({
         type: String,
         required: false // Description is optional
     },
-    imageUrl: {
-        type: String,
-        required: false,
-        validate: {
-            validator: (v) => /^https?:\/\/.*\.(jpg|jpeg|png)$/i.test(v), // URL validation for image
-            message: "Invalid image URL format"
-        }
+imageUrl: {
+  type: String,
+  required: false,
+  validate: {
+    validator: function (v) {
+      // Allow empty or valid URL starting with http/https
+      if (!v) return true;
+      return /^https?:\/\/.+/i.test(v);
     },
+    message: "Invalid image URL format",
+  },
+},
     publishedYear: {
         type: Number,
         min: [1900, "Published year must be a valid year"], // Published year validation

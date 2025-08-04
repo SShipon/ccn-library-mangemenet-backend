@@ -6,7 +6,7 @@ const { verifyAdmin } = require("../middlewares/verifyAdmin");
 const router = express.Router();
 
 // Create book - logged in user
-router.post("/", verifyToken, createBook);
+router.post("/",  createBook);
 
 // Get all books - public route
 router.get("/", getBooks);
