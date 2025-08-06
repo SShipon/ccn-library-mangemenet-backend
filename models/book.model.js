@@ -32,6 +32,7 @@ imageUrl: {
     message: "Invalid image URL format",
   },
 },
+
     publishedYear: {
         type: Number,
         min: [1900, "Published year must be a valid year"], // Published year validation
@@ -72,3 +73,10 @@ imageUrl: {
 }, { timestamps: true });
 
 module.exports = mongoose.model("Book", bookSchema);
+                     
+
+
+
+
+
+

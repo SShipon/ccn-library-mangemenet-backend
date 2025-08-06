@@ -1,10 +1,16 @@
 const express = require("express");
-const { register, login, updateProfile } = require("../controllers/auth.controller");
+const {
+  register,
+  login,
+  getAllUsers,
+  updateUserRole,
+} = require("../controllers/auth.controller");
 const { verifyToken } = require("../middlewares/verifyToken");
 const router = express.Router();
 
 router.post("/register", register);
 router.post("/login", login);
-router.put("/update-profile", verifyToken, updateProfile);
+router.get("/all-users", verifyToken, getAllUsers);
+router.patch("/update-role/:id", verifyToken, updateUserRole);
 
 module.exports = router;
